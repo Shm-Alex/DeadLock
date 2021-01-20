@@ -14,7 +14,7 @@ namespace DeadLock
                 Thread.Sleep(sleepTimeMs);
                 Console.WriteLine($"file {file1} not exist! waiting creation");
             }
-
+            DeleteFileIfExist(new string[]{file1});
             using (var f = File.Create(file2))
             {
             } ;
@@ -33,8 +33,7 @@ namespace DeadLock
         {
             var aTxt = "a.txt";
             var bTxt = "b.txt";
-            string[] ab = new string[] { aTxt, bTxt };
-            DeleteFileIfExist(ab);
+            DeleteFileIfExist(new string[] { aTxt, bTxt });
             if (File.Exists(bTxt))File.Delete(bTxt);
             var t1= Task.Run(() =>{
                 FileCreationDeadlockAsync(aTxt, bTxt, 100);
@@ -45,13 +44,13 @@ namespace DeadLock
             // здесь потоки взаимо блокируют себя и немогут закончится
             // пока один из них не создаст файл а.тхт либо 
             var ch = Console.ReadKey();
-            await using (var f = File.Create(aTxt))
-            {
-            };
-           await t1;
+            //создание файла например aTxt позволит разблокироваться обоим потокам
+            //и выйти из взаимной блокировки
+            await t1;
             await t2;
+            await using (var f = File.Create(aTxt)) { };
             var ch2 = Console.ReadKey();
-            DeleteFileIfExist(ab);
+            
 
 
 
