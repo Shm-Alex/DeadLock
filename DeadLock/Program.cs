@@ -29,7 +29,7 @@ namespace DeadLock
                 FileCreationDeadlockAsync("a.txt", "b.txt", 100);
             });
             var ch = Console.ReadKey();
-            using (var f = File.Create("a.txt"))
+            await using (var f = File.Create("a.txt"))
             {
             };
            
