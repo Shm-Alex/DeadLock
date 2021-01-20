@@ -42,12 +42,13 @@ namespace DeadLock
             var t2 = Task.Run(() => {
                 FileCreationDeadlockAsync(bTxt, aTxt, 100);
             });
+            // здесь потоки взаимо блокируют себя и немогут закончится
+            // пока один из них не создаст файл а.тхт либо 
             var ch = Console.ReadKey();
             await using (var f = File.Create(aTxt))
             {
             };
-           
-            await t1;
+           await t1;
             await t2;
             var ch2 = Console.ReadKey();
             DeleteFileIfExist(ab);
